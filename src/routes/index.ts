@@ -1,5 +1,5 @@
 import express, { Request, Response } from 'express';
-import { supabase } from '@/utils/supabaseClient'; // Ensure your path is correct
+import { supabase } from '../utils/supabaseClient'; // Ensure your path is correct
 
 const router = express.Router();
 
