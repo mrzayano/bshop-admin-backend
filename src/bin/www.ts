@@ -3,7 +3,7 @@
 /**
  * Module dependencies.
  */
-import app from '@/app'; // Ensure this path is correct
+import app from '../app'; // Ensure this path is correct
 import debug from 'debug';
 import http from 'http';
 import helmet from 'helmet'; // For security
