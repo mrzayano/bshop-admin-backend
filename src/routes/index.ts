@@ -6,31 +6,36 @@ const router = express.Router();
 // Route to get all products with optional search functionality
 // Route to get all products
 router.get('/products', async (req: Request, res: Response) => {
-    const { data, error } = await supabase.from('products').select('*');
+    try {
+        const { data, error } = await supabase.from('products').select('*');
 
-    if (error) {
-        console.error("Error fetching products from Supabase:", error.message);
-        return res.status(500).json({ error: error.message });
+        if (error) {
+            console.error("Error fetching products from Supabase:", error.message);
+            return res.status(500).json({ error: error.message });
+        }
+
+        console.log("Products retrieved:", data);
+        res.status(200).json(data);
+    } catch (err) {
+        console.error("Unexpected error:", err);
+        res.status(500).json({ error: "An unexpected error occurred." });
     }
-
-    console.log("Products retrieved:", data);
-    res.status(200).json(data);
 });
 
 
 
 
 
+
 router.post('/products/add', async (req: Request, res: Response) => {
-    const { names, prices, } = req.body;
-
-    console.log("Received data:", { names, prices });
-
-    if (!names || !prices) {
-        return res.status(400).json({ error: "Both 'names' and 'prices' are required." });
-    }
-
     try {
+        const { names, prices, } = req.body;
+
+        console.log("Received data:", { names, prices });
+
+        if (!names || !prices) {
+            return res.status(400).json({ error: "Both 'names' and 'prices' are required." });
+        }
         const { error } = await supabase.from('products').insert([{ names, prices }]);
 
         if (error) {
@@ -48,43 +53,53 @@ router.post('/products/add', async (req: Request, res: Response) => {
 })
 
 router.get('/products/edit/:id', async (req: Request, res: Response) => {
-    const { id } = req.params;
+    try {
+        const { id } = req.params;
 
-    const { data, error } = await supabase.from('products').select('*').eq('id', id).single();
+        const { data, error } = await supabase.from('products').select('*').eq('id', id).single();
 
-    if (error) {
-        console.error("Error fetching product for editing:", error.message);
-        return res.status(404).json({ error: "Product not found" });
+        if (error) {
+            console.error("Error fetching product for editing:", error.message);
+            return res.status(404).json({ error: "Product not found" });
+        }
+
+        console.log("Editing product:", data);
+        res.status(200).json(data);
+    } catch (err) {
+        console.error("Unexpected error:", err);
+        res.status(500).json({ error: "An unexpected error occurred." });
     }
-
-    console.log("Editing product:", data);
-    res.status(200).json(data);
 });
 
 // Update product by ID
 router.post('/products/edit/:id', async (req: Request, res: Response) => {
-    const { id } = req.params;
-    const { names, prices } = req.body;
+    try {
+        const { id } = req.params;
+        const { names, prices } = req.body;
 
-    const { data, error } = await supabase
-        .from('products')
-        .update({ names, prices })
-        .eq('id', id);
+        const { data, error } = await supabase
+            .from('products')
+            .update({ names, prices })
+            .eq('id', id);
 
-    if (error) {
-        console.error("Error updating product:", error.message);
-        return res.status(500).json({ error: "Failed to update product" });
+        if (error) {
+            console.error("Error updating product:", error.message);
+            return res.status(500).json({ error: "Failed to update product" });
+        }
+
+        console.log("Product updated:", data);
+        res.status(200).json(data);
+    } catch (err) {
+        console.error("Unexpected error:", err);
+        res.status(500).json({ error: "An unexpected error occurred." });
     }
-
-    console.log("Product updated:", data);
-    res.status(200).json(data);
 });
 
 
 router.delete('/products/delete/:id', async (req: Request, res: Response) => {
-    const productId = req.params.id;
-
     try {
+        const productId = req.params.id;
+
         const { error: deleteError } = await supabase
             .from('products')
             .delete()

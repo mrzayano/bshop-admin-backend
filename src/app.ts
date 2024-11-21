@@ -26,7 +26,7 @@ app.use(cors({
 }));
 
 // Import your router
-import indexRouter from 'routes/index'; // Ensure the path is correct
+import indexRouter from './routes/index'; // Ensure the path is correct
 
 // Mount the router at the `/api` path
 app.use('/api', indexRouter);
